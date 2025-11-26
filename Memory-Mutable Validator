@@ -1,0 +1,74 @@
+Created by: Nitin Jadhav on Nov 26, 2025
+
+Memory/Mutable Validator in Python
+
+A "memory/mutable validator" in Python generally refers to understanding or checking whether an object is mutable (can be changed after creation) or immutable (cannot be changed). It may also relate to tools or methods to validate or detect memory usage, leaks, or behaviors related to mutable objects.
+
+Key points about mutability and memory validation in Python:
+- Mutable objects like lists, dictionaries, and sets can have their contents modified in place; thus, their memory can change during execution. Immutable objects like strings, tuples, and integers cannot be changed after creation, which affects how memory is managed and optimized by Python.
+
+- Validating mutability programmatically includes checking the object type or even attempting to modify an attribute/value safely to determine if an object is mutable.
+
+- For memory validation or profiling, Python tools such as memory_profiler or Python Memory Validator detect memory usage and leaks by analyzing how Python objects occupy and release memory.
+
+- In data validation contexts, libraries like Pydantic help validate data types and structures in Python, and special care is given to mutable default arguments, which can lead to bugs if the same mutable object is shared across function calls.
+
+For example, Pydantic highlights issues of using mutable defaults as function arguments, which can cause unintended shared state across instances if not carefully handled.
+
+Additionally, to test mutability, one common approach is to try to set or modify an attribute or element of an object and catch exceptions to determine mutability.
+
+These concepts combine memory handling and mutability validation, important for writing efficient, bug-free Python programs and validating data structures.
+
+HOW TO DETECT MUTATIONS IN PYTHON OBJECT AT RUNTIME
+
+Detecting mutations in a Python object at runtime can be done by monitoring changes to its attributes through various approaches, since Python does not have built-in mutation detection. Common techniques include:
+
+-Using custom attribute setters: Override the object's `__setattr__` method to intercept and log or react whenever an attribute is set or changed.
+
+- Observer pattern or watchers: Implement observer callbacks that notify when specific attributes or the object's state changes.
+
+- Using third-party libraries like object-tracker: This library can automatically track and log attribute changes, providing functions to check if and which attributes have been mutated, and even trigger callback functions on mutations.
+
+- Wrapper classes or descriptors: Wrap mutable parts of the object or use descriptors to monitor set operations.
+
+- Comparing snapshots: Take a deep copy or hash of the object's state and compare over time to detect differences.
+
+Example with `object-tracker` library usage for attribute change detection:
+
+from object_tracker import track
+
+def observer(attr, old, new):
+    print(f"Observer: {attr} changed from {old} to {new}")
+
+@track('name', 'age', observers=[observer])
+class User:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+user = User("Alice", 30)
+user.name = "Bob"  # Observer: name changed from Alice to Bob
+print(user.tracker.has_changed())  # True
+
+This showcases automatic tracking and callback on mutation to monitored attributes.
+
+Alternatively, for small cases, overriding `__setattr__` directly in a class can be sufficient:
+
+class TrackChanges:
+    def __init__(self):
+        self._changes = {}
+
+    def __setattr__(self, key, value):
+        if key != '_changes' and hasattr(self, key):
+            old = getattr(self, key)
+            if old != value:
+                self._changes[key] = (old, value)
+        super().__setattr__(key, value)
+
+obj = TrackChanges()
+obj.name = "Alice"
+obj.name = "Bob"
+print(obj._changes)  # {'name': ('Alice', 'Bob')}
+
+
+These approaches help detect runtime mutations in mutable objects by intercepting attribute assignments or tracking state changes.
