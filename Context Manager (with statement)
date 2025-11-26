@@ -1,0 +1,31 @@
+Created by: Nitin Jadhav on Nov 26, 2025
+
+Context Manager (with statement)
+
+A Context Manager is any class that defines two "Magic Methods":
+__enter__(self): Run when entering the with block.
+__exit__(self, exc_type, exc_val, exc_tb): Run when exiting (even if an error occurs).
+
+The `with` statement in Python is used to wrap the execution of a block of code within methods defined by a context manager, which is typically a class implementing the `__enter__()` and `__exit__()` methods. The purpose of the `with` statement is to ensure that setup and cleanup actions are taken automatically around the block of code, such as opening and then properly closing a file or managing other resources like network connections or locks.
+
+When execution enters the `with` block, the context manager's `__enter__()` method is called to perform any setup needed and its return value (if any) can be assigned to a variable using `as`. When the block finishes—whether normally or through an exception—the `__exit__()` method is called to handle cleanup, like closing files or releasing resources. This guarantees that cleanup happens even with errors, making resource management cleaner and safer compared to manual try-finally blocks.
+
+In essence, the `with` statement simplifies resource handling by automatically managing the lifecycle of resources and ensuring predictable cleanup, reducing the risk of resource leaks and making code more readable.
+
+The `__exit__` method in a Python context manager is a special method that is automatically called when the code block inside a `with` statement finishes execution, whether it exits normally or due to an exception. It takes four parameters:
+
+- `self`: the instance of the context manager class.
+- `exc_type`: the type of exception that was raised in the block (e.g., `ZeroDivisionError`), or `None` if no exception occurred.
+- `exc_val`: the actual exception object or error value, or `None`.
+- `exc_tb`: the traceback object, which helps in debugging by showing where the error happened, or `None`.
+
+The purpose of the `__exit__` method is to handle cleanup tasks like releasing resources (closing files, freeing connections, etc.) after the block finishes. It runs even if an exception is raised, ensuring proper resource management.
+
+Additionally, if `__exit__` returns `True`, it suppresses the exception, meaning the exception will not be propagated further. If it returns `False` or `None`, the exception is re-raised after `__exit__` completes.
+
+In summary, `__exit__` ensures resources are cleaned up and can optionally handle or suppress exceptions that arise inside the `with` block, providing a clean and safe way to manage resources in Python.
+
+with open("file.txt", "r") as f:
+    content = f.read()
+
+We use this constantly for Database Sessions. You open a connection, run a query, and must close the connection. If you forget, your database crashes.
