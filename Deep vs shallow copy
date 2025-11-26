@@ -1,0 +1,25 @@
+deep = [[1,2],[3,4]]
+shallow = deep.copy()
+print(shallow)
+output -> [[1,2],[3,4]]
+shallow[0][0] = 99
+print(shallow)
+output -> [[99,2],[3,4]]
+
+Shallow and deep copies are two ways of creating copies of objects.
+
+Shallow copy creates a new object but copies only the outermost structure, the nested objects are shared between original and shallow copy. Changes made in nested copy with affect both. Implemented using object.copy().
+
+Deep copy, on the other hand, creates a new object and recursively copies all nested objects producing a fully independent duplicate. Changes to deep copy does not affect the orginal object. Implemented using object.deepcopy().
+
+Shallow copy to be used when:
+1. Your object is flat and contains only immutable elements.
+2. You want a quick and efficient copy without duplicating nested structures.
+3. You are okay with shared reference to nested objects.
+
+Deep copy to be used when:
+1. Your object has nested mutable structures.
+2. You require complete isolation between orignal and copy.
+3. You don't want shared reference.
+
+Shallow copy uses less memory and faster in computation.
